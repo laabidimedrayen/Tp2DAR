@@ -1,7 +1,10 @@
 package serverpackage;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.*;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
@@ -9,9 +12,11 @@ public class Server {
     public static void main(String[] args) 
     {
 
-        int x,y;
+        String op; 
+        String[] parts;
 
-        String op;
+        int x,y,r;
+
 
         boolean conti=true;
 
@@ -25,40 +30,41 @@ public class Server {
             System.out.println("Je suis un serveur en attente la connexion d'un client");
 
             Socket clientSocket = serverSocket.accept();
-            System.out.println("un client est connectÃ©"); 
+            System.out.println("un client est connecté"); 
 
-            DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-            DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+           
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
             while(conti)
             {
-                x = in.readInt();
-                y = in.readInt();
-                op = in.readUTF();
-                if(x==0 && y==0)
+                op = in.readLine();
+                parts = op.split("\\s+");
+                x = Integer.parseInt(parts[0]);
+                op = parts[1];
+                y = Integer.parseInt(parts[2]);
+                switch (op) 
                 {
-                    conti = false;
+                    case "+"-> 
+                    {
+                        r=x+y;
+                    }
+                    case "-"-> 
+                    {
+                        r=x-y;
+                    }
+                    case "*"-> 
+                    {
+                        r=x*y;
+                    }
+                    case "/"-> 
+                    {
+                        r=x/y;
+                    }
+                    default -> throw new AssertionError();
+
                 }
-                else
-                {
-                    if(op.equals("+"))
-                    {
-                        out.writeInt(x+y);
-                    }
-                    else if(op.equals("-"))
-                    {
-                        out.writeInt(x-y);
-                    }
-                    else if(op.equals("/"))
-                    {
-                        out.writeInt(x*y);
-                    }
-                    else if(op.equals("/"))
-                    {
-                        out.writeInt(x/y);
-                    }
-                out.flush();
-                }
+                out.println(r);
                 System.out.println("Resulta envoie succefully!");
             }
             clientSocket.close();
