@@ -2,8 +2,10 @@ package serverpackage;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.*;
+import java.rmi.server.Operation;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,7 +15,7 @@ public class Server {
     {
 
         String op; 
-        String[] parts;
+        
 
         int x,y,r;
 
@@ -33,16 +35,14 @@ public class Server {
             System.out.println("un client est connecté"); 
 
            
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
             while(conti)
             {
-                op = in.readLine();
-                parts = op.split("\\s+");
-                x = Integer.parseInt(parts[0]);
-                op = parts[1];
-                y = Integer.parseInt(parts[2]);
+                opr op = (opr) in.readObject();
+                int o1 = op.getO1();
+                int o2 = op.getO2();
+                op = op.getop();
                 switch (op) 
                 {
                     case "+"-> 
